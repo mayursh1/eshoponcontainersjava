@@ -2,12 +2,12 @@ version: '3.7'
 
 services:
   node:
-    image: config-server
+    image: discovery-server
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8888:8888"
+      - "8761:8761"
     networks:
       - default
 
