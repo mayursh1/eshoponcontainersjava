@@ -1,3 +1,6 @@
+#folders to ignore
+.gradle/
+
 # Compiled class file
 *.class
 
