@@ -12,10 +12,6 @@ repositories {
 	mavenCentral()
 }
 
-processResources {
-	expand(project.properties)
-}
-
 ext {
 	set('springCloudVersion', "2021.0.0")
 }

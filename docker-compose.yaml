@@ -6,9 +6,6 @@ services:
     build:
       context: .
       dockerfile: ./discovery-server/Dockerfile
-      args:
-        discoveryhost: discovery-server
-        discoveryport: 8761
     ports:
       - "8761:8761"
     networks:
