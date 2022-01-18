@@ -1,16 +1,38 @@
 version: '3.7'
 
 services:
-  node:
+  discovery-server:
     image: discovery-server
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./discovery-server/Dockerfile
+      args:
+        discoveryhost: discovery-server
+        discoveryport: 8761
     ports:
       - "8761:8761"
     networks:
       - default
-
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8761"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  config-server:
+    image: config-server
+    build:
+      context: .
+      dockerfile: ./config-server/Dockerfile
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "8888:8888"
+    environment:
+      - discoveryhost=discovery-server
+      - discoveryport=8761
+    networks:
+      - default
 networks:
   default:
     driver: bridge

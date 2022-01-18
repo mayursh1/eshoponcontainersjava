@@ -6,10 +6,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        discoveryhost: discovery-server
+        discoveryport: 8761      
     ports:
       - "8888:8888"
     networks:
       - default
+    environment:
+      - discoveryhost=discovery-server
+      - discoveryport=8761
 
 networks:
   default:

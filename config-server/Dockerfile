@@ -1,10 +1,14 @@
 FROM gradle:7.3.3-jdk17-alpine AS build
 RUN mkdir /home/gradle/src
 COPY --chown=gradle:gradle . /home/gradle/src
+ARG discoveryhost
+ARG discoveryport
 
 # Build
 WORKDIR /home/gradle/src
-COPY ./build/libs/* /home/gradle/src/build/libs/
+RUN echo discoveryhost=$discoveryhost >> gradle.properties
+RUN echo discoveryport=$discoveryport >> gradle.properties
+COPY . .
 RUN gradle build --no-daemon
 
 
