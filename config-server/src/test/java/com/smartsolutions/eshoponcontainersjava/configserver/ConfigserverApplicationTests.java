@@ -3,10 +3,10 @@ package com.smartsolutions.eshoponcontainersjava.configserver;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class ConfigserverApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 
