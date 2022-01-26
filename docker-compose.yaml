@@ -45,6 +45,8 @@ services:
     environment:
       - discoveryhost=discovery-server
       - discoveryport=8761
+      - dbhost=catalog-database
+      - dbport=3306
     networks:
       - default
     depends_on:
@@ -57,7 +59,7 @@ services:
     image: mysql:latest
     container_name: catalogdb
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
       - "./.data/catalogdb:/var/lib/mysql"
       - "./catalog-service/src/main/resources:/var/tmp/sqlscripts"

@@ -1,15 +1,18 @@
 package com.smartsolutions.eshoponcontainersjava.catalogservice.models;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.extern.jackson.Jacksonized;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
+//@JsonDeserialize(builder = CatalogItem.CatalogItemBuilder.class)
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Accessors(fluent = true)
@@ -17,31 +20,51 @@ import java.math.BigDecimal;
 public class CatalogItem {
 
     @Id
+    @GeneratedValue
+    @JsonProperty("id")
     private int id;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("descripton")
     private String description;
 
+    @JsonProperty("price")
     private BigDecimal price;
 
+    @JsonProperty("pictureFileName")
     private String pictureFileName;
 
+    @JsonProperty("pictureUri")
     private String pictureUri;
 
-    private int catalogTypeId;
-
+    @ManyToOne
+    @JoinColumn(name = "catalog_type_id")
+    @JsonProperty("catalogType")
     private CatalogType catalogType;
 
-    private int catalogBrandId;
 
+    @ManyToOne
+    @JoinColumn(name = "catalog_brand_id")
+    @JsonProperty("catalogBrand")
     private CatalogBrand catalogBrand;
 
     // Quantity in stock
+    @JsonProperty("availableStock")
     private int availableStock;
 
     // Available stock at which we should reorder
+    @JsonProperty("restockThreshold")
     private int restockThreshold;
 
 
     // Maximum number of units that can be in-stock at any time (due to physicial/logistical constraints in warehouses)
+    @JsonProperty("maxStockThreshold")
     public int maxStockThreshold;
+/*
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class CatalogItemBuilder {
+
+    }
+*/
 }
