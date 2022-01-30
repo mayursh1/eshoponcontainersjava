@@ -40,6 +40,18 @@ public class CatalogItemService {
         return response;
     }
 
+    public CatalogItem update(CatalogItem item){
+        return repository.save(item);
+    }
+
+    public CatalogItem add(CatalogItem item){
+        return repository.save(item);
+    }
+
+    public void delete(Integer id){
+        repository.deleteById(id);
+    }
+
 
     public void saveAll(List<CatalogItem> catalogItems){
         repository.saveAll(catalogItems);

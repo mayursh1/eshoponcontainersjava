@@ -1,12 +1,15 @@
 package com.smartsolutions.eshoponcontainersjava.catalogservice.controllers;
 
+import com.smartsolutions.eshoponcontainersjava.catalogservice.events.ProductPriceChangedIntegrationEvent;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogBrand;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogItem;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogType;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogBrandService;
+import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogIntegrationService;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogItemService;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +21,22 @@ import java.util.stream.Collectors;
 @RestController()
 @RequestMapping("catalog")
 public class CatalogController {
+    //region Declarations
     @Autowired
-    CatalogItemService catalogService;
-
-    @Autowired
-    CatalogTypeService catalogTypeService;
+    private CatalogItemService catalogService;
 
     @Autowired
-    CatalogBrandService catalogBrandService;
+    private CatalogTypeService catalogTypeService;
+
+    @Autowired
+    private CatalogBrandService catalogBrandService;
+
+    @Autowired
+    private CatalogIntegrationService integrationService;
+    //endregion
 
 
+    //region Catalog Items related end points
     @GetMapping("/items")
     public ResponseEntity<List<CatalogItem>> getItems(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                       @RequestParam(value = "pageSize", required = false) Integer pageSize,
@@ -92,6 +101,49 @@ public class CatalogController {
     }
 
 
+    @PutMapping("items")
+    public ResponseEntity<CatalogItem> UpdateItem(@RequestBody CatalogItem item) {
+        if(item == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        var catalogItem = catalogService.getCatalogItemById(item.id());
+        if(catalogItem == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        var updatedItem = catalogService.update(item);
+        if(!catalogItem.price().equals(item.price())) {
+            var priceChangedEvent = new ProductPriceChangedIntegrationEvent(catalogItem.id(), item.price() , catalogItem.price());
+            //Todo : Make updates atomic
+            integrationService.PublishThroughEventBusAsync(priceChangedEvent);
+        }
+
+        return ResponseEntity.ok(updatedItem);
+    }
+
+    @PostMapping("items")
+    public ResponseEntity<CatalogItem> AddItem(@RequestBody CatalogItem item) {
+        if(item == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        var updatedItem = catalogService.add(item);
+        return ResponseEntity.ok(updatedItem);
+    }
+
+    @DeleteMapping("items/{id}")
+    public ResponseEntity<Object> DeleteProduct(@PathVariable Integer id) {
+        if(id == null || id <=0) {
+            return ResponseEntity.badRequest().body("Invalid delete request");
+        }
+        if(catalogService.getCatalogItemById(id) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        catalogService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    //endregion
+
+
+    //region Catalog Type related end points
     @GetMapping("catalogtypes")
     public ResponseEntity<List<CatalogType>> getCatalogTypes() {
         try {
@@ -112,6 +164,12 @@ public class CatalogController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+
+    //endregion
+
+
+    //region Catalog Bran related end points
     @GetMapping("catalogbrands")
     public ResponseEntity<List<CatalogBrand>> getCatalogBrands() {
         try {
@@ -132,7 +190,9 @@ public class CatalogController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    //endregion
 
+    //region Private Methods
     private List<CatalogItem> getItemsByIdsImpl(String ids) {
         var numIds =  Arrays.stream(ids.split(","))    // Split string by ','
                 .map(this::tryParseInteger)                         // Convert to Integer
@@ -148,4 +208,5 @@ public class CatalogController {
             return null;
         }
     }
+    //endregion
 }
