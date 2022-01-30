@@ -1,7 +1,9 @@
 package com.smartsolutions.eshoponcontainersjava.catalogservice.controllers;
 
+import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogBrand;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogItem;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogType;
+import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogBrandService;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogItemService;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,10 @@ public class CatalogController {
 
     @Autowired
     CatalogTypeService catalogTypeService;
+
+    @Autowired
+    CatalogBrandService catalogBrandService;
+
 
     @GetMapping("/items")
     public ResponseEntity<List<CatalogItem>> getItems(@RequestParam(value = "pageNo", required = false) Integer pageNo,
@@ -90,6 +96,38 @@ public class CatalogController {
     public ResponseEntity<List<CatalogType>> getCatalogTypes() {
         try {
             return ResponseEntity.ok(catalogTypeService.getCatalogItems());
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("catalogtypes/{catalogId}")
+    public ResponseEntity<CatalogType> getCatalogTypeById(@PathVariable("catalogId") Integer catalogId) {
+        if(catalogId == null || catalogId <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            return ResponseEntity.ok(catalogTypeService.getCatalogItemById(catalogId));
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    @GetMapping("catalogbrands")
+    public ResponseEntity<List<CatalogBrand>> getCatalogBrands() {
+        try {
+            return ResponseEntity.ok(catalogBrandService.getCatalogBrands());
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("catalogbrands/{brandId}")
+    public ResponseEntity<CatalogBrand> getCatalogBrandById(@PathVariable("brandId") Integer brandId) {
+        if(brandId == null || brandId <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            return ResponseEntity.ok(catalogBrandService.getCatalogBrandById(brandId));
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().build();
         }
