@@ -1,7 +1,9 @@
 package com.smartsolutions.eshoponcontainersjava.catalogservice.controllers;
 
 import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogItem;
+import com.smartsolutions.eshoponcontainersjava.catalogservice.models.CatalogType;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogItemService;
+import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,36 +19,80 @@ public class CatalogController {
     @Autowired
     CatalogItemService catalogService;
 
+    @Autowired
+    CatalogTypeService catalogTypeService;
+
     @GetMapping("/items")
-    public List<CatalogItem> getItems(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+    public ResponseEntity<List<CatalogItem>> getItems(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                       @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                       @RequestParam(value = "ids", required = false) String ids) {
-        if(ids != null) {
-            return getItemsByIdsImpl(ids);
+        if((pageNo != null && pageNo <= 0) || (pageSize != null && pageSize <= 0)) {
+            return ResponseEntity.badRequest().build();
         }
-        else {
-            return catalogService.getCatalogItems(pageNo != null ? pageNo : 1, pageSize != null ? pageSize : 10);
+
+        try {
+            List<CatalogItem> response;
+            if (ids != null) {
+                response = getItemsByIdsImpl(ids);
+            } else {
+                response = catalogService.getCatalogItems(pageNo != null ? pageNo : 1, pageSize != null ? pageSize : 10);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/items/{id}")
-    public CatalogItem getItemById(@PathVariable("id") Integer id) {
-        return catalogService.getCatalogItemById(id);
+    public ResponseEntity<CatalogItem> getItemById(@PathVariable("id") Integer id) {
+        if(id == null || id < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            return ResponseEntity.ok(catalogService.getCatalogItemById(id));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/items/withname/{name}")
-    public List<CatalogItem> getItemByName(@PathVariable("name") String name) {
-        return catalogService.getCatalogItemsByName(name);
+    public ResponseEntity<List<CatalogItem>> getItemByName(@PathVariable("name") String name) {
+        if(name == null || name.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            return ResponseEntity.ok(catalogService.getCatalogItemsByName(name));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/items/type/{typeId}/brand/{brandId}")
-    public ResponseEntity<Object> getItemByName(@PathVariable("typeId") Integer typeId,
+    public ResponseEntity<List<CatalogItem>> getItemByName(@PathVariable("typeId") Integer typeId,
                                                 @PathVariable("brandId") Integer brandId,
                                                 @RequestParam(value = "pageNo", required = false) Integer pageNo,
                                                 @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        if( typeId != null && brandId != null)
+        if(typeId == null || brandId == null || typeId < 0 || brandId < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        if(pageNo < 0 || pageSize < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
             return ResponseEntity.ok(catalogService.getCatalogItemsByTypeAndBrand(typeId, brandId, pageNo, pageSize));
-        return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @GetMapping("catalogtypes")
+    public ResponseEntity<List<CatalogType>> getCatalogTypes() {
+        try {
+            return ResponseEntity.ok(catalogTypeService.getCatalogItems());
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     private List<CatalogItem> getItemsByIdsImpl(String ids) {
