@@ -25,7 +25,7 @@ public class CatalogItemService {
     }
 
     public List<CatalogItem> getCatalogItemsByName(String name){
-        return repository.findByName(name);
+        return repository.findByNameContainsIgnoreCase(name);
     }
 
     public List<CatalogItem> getCatalogItemsByTypeAndBrand(int typeId, int brandId, Integer pageNo, Integer pageSize){
