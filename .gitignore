@@ -1,6 +1,7 @@
 #folders to ignore
 .gradle/
 .data/
+.messagebus/
 
 # Compiled class file
 *.class

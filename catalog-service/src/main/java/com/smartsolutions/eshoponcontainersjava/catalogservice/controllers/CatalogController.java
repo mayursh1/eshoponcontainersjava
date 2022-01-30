@@ -41,7 +41,7 @@ public class CatalogController {
     public ResponseEntity<List<CatalogItem>> getItems(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                       @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                       @RequestParam(value = "ids", required = false) String ids) {
-        if((pageNo != null && pageNo <= 0) || (pageSize != null && pageSize <= 0)) {
+        if((pageNo != null && pageNo < 0) || (pageSize != null && pageSize <= 0)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -110,8 +110,9 @@ public class CatalogController {
         if(catalogItem == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        var price = catalogItem.price();
         var updatedItem = catalogService.update(item);
-        if(!catalogItem.price().equals(item.price())) {
+        if(!price.equals(item.price())) {
             var priceChangedEvent = new ProductPriceChangedIntegrationEvent(catalogItem.id(), item.price() , catalogItem.price());
             //Todo : Make updates atomic
             integrationService.PublishThroughEventBusAsync(priceChangedEvent);

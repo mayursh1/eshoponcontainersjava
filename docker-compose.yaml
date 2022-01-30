@@ -73,6 +73,17 @@ services:
       MYSQL_DATABASE: catalogdb
     networks:
       - default
+  messaging-service:
+    image: rabbitmq:3-management
+    container_name: messagebus
+    ports:
+      - 5673:5672
+      - 15673:15672
+    volumes:
+      - "./.messagebus/data:/var/lib/rabbitmq/"
+      - "./messagebus/log/:/var/log/rabbitmq"
+      
+  
 networks:
   default:
     driver: bridge
