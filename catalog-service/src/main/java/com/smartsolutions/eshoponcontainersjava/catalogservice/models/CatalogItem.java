@@ -38,13 +38,13 @@ public class CatalogItem {
     private String pictureUri;
 
     @ManyToOne
-    @JoinColumn(name = "catalog_type_id")
+    @JoinColumn(name = "typeId")
     @JsonProperty("catalogType")
     private CatalogType catalogType;
 
 
     @ManyToOne
-    @JoinColumn(name = "catalog_brand_id")
+    @JoinColumn(name = "brandId")
     @JsonProperty("catalogBrand")
     private CatalogBrand catalogBrand;
 

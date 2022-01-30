@@ -7,8 +7,6 @@ import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogB
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogItemService;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.services.CatalogTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -27,38 +25,38 @@ public class DataSeeder implements CommandLineRunner {
     private CatalogTypeService catalogTypeService;
 
     @Override
-    public void run(String... args) throws Exception {
-        CatalogItem item = catalogItemService.getCatalogItemById(1);
-        if(item == null) {
-            // Data has not been initialized
-            var types = new ArrayList<CatalogType>();
-            types.add((new CatalogType()).type("Fashion"));
-            types.add((new CatalogType()).type("Electronics"));
-            types.add((new CatalogType()).type("Home and Kitchen"));
-            types.add((new CatalogType()).type("Sports"));
-            types.add((new CatalogType()).type("Toys"));
+    public void run(String... args) {
+        var currentItems = catalogItemService.getCatalogItems(1,1);
+        if (currentItems.size() != 0) return;
 
-            catalogTypeService.saveAll(types);
+        // Data has not been initialized
+        var types = new ArrayList<CatalogType>();
+        types.add((new CatalogType()).type("Fashion"));
+        types.add((new CatalogType()).type("Electronics"));
+        types.add((new CatalogType()).type("Home and Kitchen"));
+        types.add((new CatalogType()).type("Sports"));
+        types.add((new CatalogType()).type("Toys"));
 
-            var brands = new ArrayList<CatalogBrand>();
-            brands.add((new CatalogBrand()).brand("Raymond"));
-            brands.add((new CatalogBrand()).brand("Nokia"));
-            brands.add((new CatalogBrand()).brand("Samsung"));
-            brands.add((new CatalogBrand()).brand("LG"));
-            brands.add((new CatalogBrand()).brand("Philiphs"));
+        catalogTypeService.saveAll(types);
 
-            catalogBrandService.saveAll(brands);
+        var brands = new ArrayList<CatalogBrand>();
+        brands.add((new CatalogBrand()).brand("Raymond"));
+        brands.add((new CatalogBrand()).brand("Nokia"));
+        brands.add((new CatalogBrand()).brand("Samsung"));
+        brands.add((new CatalogBrand()).brand("LG"));
+        brands.add((new CatalogBrand()).brand("Philiphs"));
 
-            var items = new ArrayList<CatalogItem>();
-            items.add((new CatalogItem()).catalogBrand(brands.get(0)).catalogType(types.get(0)).description("Pants for men").name("PantsM"));
-            items.add((new CatalogItem()).catalogBrand(brands.get(0)).catalogType(types.get(0)).description("Pants for Women").name("PantsW"));
-            items.add((new CatalogItem()).catalogBrand(brands.get(1)).catalogType(types.get(1)).description("Nokia Mobile").name("MobileNk"));
-            items.add((new CatalogItem()).catalogBrand(brands.get(2)).catalogType(types.get(1)).description("Samsung Mobile").name("MobileSs"));
-            items.add((new CatalogItem()).catalogBrand(brands.get(3)).catalogType(types.get(2)).description("LG Fridge").name("FridgeLg"));
-            items.add((new CatalogItem()).catalogBrand(brands.get(3)).catalogType(types.get(2)).description("Philiphs Fridge").name("FridgePh"));
+        catalogBrandService.saveAll(brands);
 
-            catalogItemService.saveAll(items);
-        }
+        var items = new ArrayList<CatalogItem>();
+        items.add((new CatalogItem()).catalogBrand(brands.get(0)).catalogType(types.get(0)).description("Pants for men").name("PantsM"));
+        items.add((new CatalogItem()).catalogBrand(brands.get(0)).catalogType(types.get(0)).description("Pants for Women").name("PantsW"));
+        items.add((new CatalogItem()).catalogBrand(brands.get(1)).catalogType(types.get(1)).description("Nokia Mobile").name("MobileNk"));
+        items.add((new CatalogItem()).catalogBrand(brands.get(2)).catalogType(types.get(1)).description("Samsung Mobile").name("MobileSs"));
+        items.add((new CatalogItem()).catalogBrand(brands.get(3)).catalogType(types.get(2)).description("LG Fridge").name("FridgeLg"));
+        items.add((new CatalogItem()).catalogBrand(brands.get(3)).catalogType(types.get(2)).description("Philiphs Fridge").name("FridgePh"));
+
+        catalogItemService.saveAll(items);
 
     }
 
