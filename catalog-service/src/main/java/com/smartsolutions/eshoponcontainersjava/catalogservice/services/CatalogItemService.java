@@ -16,7 +16,7 @@ public class CatalogItemService {
     private CatalogItemRepository repository;
 
     public List<CatalogItem> getCatalogItems(int pageNo, int pageSize){
-        var pageable = PageRequest.of(pageNo < 0 ? 1 : pageNo, pageSize <0 ? 10 : pageSize);
+        var pageable = PageRequest.of(pageNo < 0 ? 1 : pageNo, pageSize < 0 ? 10 : pageSize);
         return repository.findAll(pageable).toList();
     }
 

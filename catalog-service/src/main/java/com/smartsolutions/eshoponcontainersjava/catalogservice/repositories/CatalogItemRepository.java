@@ -13,10 +13,8 @@ import java.util.List;
 @Repository
 public interface CatalogItemRepository extends PagingAndSortingRepository<CatalogItem, Integer> {
 
-    @Cacheable("findByNameContainsIgnoreCase")
     List<CatalogItem> findByNameContainsIgnoreCase(String name);
 
-    @Cacheable("findByTypeIdAndBrandId")
     @Query(value = "select * from catalog_item where type_id=?1 and brand_id=?2",
             countQuery = "select count(*) from catalog_item where type_id=?1 and brand_id=?2",
             nativeQuery = true)

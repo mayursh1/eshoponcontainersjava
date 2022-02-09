@@ -47,6 +47,9 @@ services:
       - discoveryport=8761
       - dbhost=catalog-database
       - dbport=3306
+      - keystore=/keystore
+    volumes:
+      - "./certificates:/keystore"
     networks:
       - default
     depends_on:

@@ -26,8 +26,8 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        var currentItems = catalogItemService.getCatalogItems(1,1);
-        if (currentItems.size() != 0) return;
+        var currentItems = catalogItemService.getCatalogItems(1,10);
+        if (!currentItems.isEmpty()) return;
 
         // Data has not been initialized
         var types = new ArrayList<CatalogType>();

@@ -90,7 +90,7 @@ public class CatalogController {
         if(typeId == null || brandId == null || typeId < 0 || brandId < 0) {
             return ResponseEntity.badRequest().build();
         }
-        if(pageNo < 0 || pageSize < 0) {
+        if((pageNo != null && pageNo < 0) || (pageNo != null && pageSize < 0)) {
             return ResponseEntity.badRequest().build();
         }
         try {

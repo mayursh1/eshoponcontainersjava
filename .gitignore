@@ -2,6 +2,7 @@
 .gradle/
 .data/
 .messagebus/
+.identitydb/
 
 # Compiled class file
 *.class
