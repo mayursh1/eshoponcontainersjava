@@ -1,6 +1,29 @@
 version: '3.7'
 
 services:
+  identity-db:
+    image: postgres
+    volumes:
+      - ".data/keycloak/db:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+  identity-service:
+    image: quay.io/keycloak/keycloak:16.1.1
+    ports:
+      - "8081:8080"
+    networks:
+      - default
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: identity-db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
   discovery-server:
     image: discovery-server
     build:
@@ -48,6 +71,7 @@ services:
       - dbhost=catalog-database
       - dbport=3306
       - keystore=/keystore
+      - identityurl=http://identity-service:8081/auth
     volumes:
       - "./certificates:/keystore"
     networks:
