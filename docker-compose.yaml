@@ -15,10 +15,10 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
   identity-service:
-    hostname: authService
+    hostname: keycloak
     image: quay.io/keycloak/keycloak:16.0.0
     ports:
-      - "8081:8080"
+      - "8080:8080"
     networks:
       - default
     depends_on:
@@ -73,7 +73,7 @@ services:
       context: ./catalog-service/
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - discoveryhost=discovery-server
       - discoveryport=8761
@@ -81,7 +81,7 @@ services:
       - dbport=3306
       - keystore=/keystore
       - identityhost=keycloak
-      - identityport=8081
+      - identityport=8080
     volumes:
       - "./certificates:/keystore"
     networks:
