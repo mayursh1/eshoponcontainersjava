@@ -15,6 +15,7 @@ services:
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD_FILE: /run/secrets/dbpassword
   identity-service:
     hostname: keycloak
     image: quay.io/keycloak/keycloak:16.0.0
@@ -29,10 +30,13 @@ services:
       DB_ADDR: identity-db
       DB_DATABASE: keycloak
       DB_USER: keycloak
+      DB_PASSWORD_FILE: /run/secrets/dbpassword
       DB_SCHEMA: public
-      DB_PASSWORD: password
       KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_PASSWORD_FILE: /run/secrets/adminpassword
+    secrets:
+      - dbpassword
+      - adminpassword
   discovery-server:
     image: discovery-server
     build:
@@ -82,7 +86,7 @@ services:
       - identityhost=keycloak
       - identityport=8080
     volumes:
-      - "./certificates:/keystore"
+      - ".data/certificates:/keystore"
     networks:
       - default
     depends_on:
@@ -95,14 +99,14 @@ services:
       - "3306:3306"
     volumes:
       - "./.data/catalogdb:/var/lib/mysql"
-      - "./catalog-service/src/main/resources:/var/tmp/sqlscripts"
+      - "./.data/catalog-service/src/main/resources:/var/tmp/sqlscripts"
     healthcheck:
         test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
         interval: 30s
         timeout: 20s
         retries: 5
     environment:
-      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/catalogdbrootpassword
       MYSQL_DATABASE: catalogdb
     networks:
       - default
@@ -112,8 +116,8 @@ services:
       - 5673:5672
       - 15673:15672
     volumes:
-      - "./.messagebus/data:/var/lib/rabbitmq/"
-      - "./messagebus/log/:/var/log/rabbitmq"
+      - "./.data/messagebus/data:/var/lib/rabbitmq/"
+      - "./.data/messagebus/log/:/var/log/rabbitmq"
   
 networks:
   default:
@@ -121,4 +125,6 @@ networks:
 
 secrets:
   dbpassword:
+    external: true
+  adminpassword:
     external: true
