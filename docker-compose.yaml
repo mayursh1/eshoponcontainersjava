@@ -10,10 +10,11 @@ services:
       timeout: 45s
       interval: 10s
       retries: 10
+    secrets:
+      - dbpassword
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
   identity-service:
     hostname: keycloak
     image: quay.io/keycloak/keycloak:16.0.0
@@ -22,8 +23,7 @@ services:
     networks:
       - default
     depends_on:
-      identity-db:
-        condition: service_healthy
+      - identity-db
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: identity-db
@@ -53,8 +53,7 @@ services:
       context: ./config-server/
       dockerfile: Dockerfile
     depends_on:
-      discovery-server:
-        condition: service_healthy
+      - discovery-server
     ports:
       - "8888:8888"
     environment:
@@ -87,14 +86,11 @@ services:
     networks:
       - default
     depends_on:
-      config-server:
-        condition: service_healthy
-      catalog-database:
-        condition: service_healthy
+      - config-server
+      - catalog-database
 
   catalog-database:
     image: mysql:latest
-    container_name: catalogdb
     ports:
       - "3306:3306"
     volumes:
@@ -112,7 +108,6 @@ services:
       - default
   messaging-service:
     image: rabbitmq:3-management
-    container_name: messagebus
     ports:
       - 5673:5672
       - 15673:15672
@@ -122,4 +117,8 @@ services:
   
 networks:
   default:
-    driver: bridge
+    driver: overlay
+
+secrets:
+  dbpassword:
+    external: true
