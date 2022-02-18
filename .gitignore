@@ -1,6 +1,7 @@
 #folders to ignore
 .gradle/
 .data/
+.data1/
 .messagebus/
 .identitydb/
 

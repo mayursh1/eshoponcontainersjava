@@ -105,6 +105,8 @@ services:
         interval: 30s
         timeout: 20s
         retries: 5
+    secrets:
+      - catalogdbrootpassword
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/catalogdbrootpassword
       MYSQL_DATABASE: catalogdb
@@ -127,4 +129,6 @@ secrets:
   dbpassword:
     external: true
   adminpassword:
+    external: true
+  catalogdbrootpassword:
     external: true
