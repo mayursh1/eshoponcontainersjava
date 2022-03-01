@@ -92,6 +92,9 @@ services:
     depends_on:
       - config-server
       - catalog-database
+    secrets:
+      - catalogdbrootpassword
+      - sslkeystorepassword
 
   catalog-database:
     image: mysql:latest
@@ -131,4 +134,6 @@ secrets:
   adminpassword:
     external: true
   catalogdbrootpassword:
+    external: true
+  sslkeystorepassword:
     external: true

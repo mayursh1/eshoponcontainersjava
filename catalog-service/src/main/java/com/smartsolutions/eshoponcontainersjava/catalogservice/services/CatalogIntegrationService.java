@@ -3,7 +3,7 @@ package com.smartsolutions.eshoponcontainersjava.catalogservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.smartsolutions.eshoponcontainersjava.catalogservice.configurations.CatalogServiceConfiguraiton;
+import com.smartsolutions.eshoponcontainersjava.catalogservice.configurations.CatalogServiceConfiguration;
 import com.smartsolutions.eshoponcontainersjava.catalogservice.events.IntegrationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class CatalogIntegrationService {
 
     @Autowired
-    private CatalogServiceConfiguraiton configuration;
+    private CatalogServiceConfiguration configuration;
 
     private final static String queue_name = "ProductPriceChanged";
 

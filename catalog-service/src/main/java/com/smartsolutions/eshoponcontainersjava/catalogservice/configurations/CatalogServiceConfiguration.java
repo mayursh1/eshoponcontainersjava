@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties() //Todo: Change this to catalog-service once config is checked in
 @Getter
 @Setter
-public class CatalogServiceConfiguraiton {
+public class CatalogServiceConfiguration {
     private String appName;
     private String appVersion;
     private String mqhost;
