@@ -115,6 +115,51 @@ services:
       MYSQL_DATABASE: catalogdb
     networks:
       - default
+  order-service:
+    image: order-service
+    build:
+      context: ./order-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      - discoveryhost=discovery-server
+      - discoveryport=8761
+      - dbhost=order-database
+      - dbport=3306
+      - keystore=/keystore
+      - identityhost=keycloak
+      - identityport=8080
+    volumes:
+      - ".data/certificates:/keystore"
+    networks:
+      - default
+    depends_on:
+      - config-server
+      - order-database
+    secrets:
+      - orderdbrootpassword
+      - sslkeystorepassword
+
+  order-database:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    volumes:
+      - "./.data/orderdb:/var/lib/mysql"
+      - "./.data/order-service/src/main/resources:/var/tmp/sqlscripts"
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 30s
+        timeout: 20s
+        retries: 5
+    secrets:
+      - orderdbrootpassword
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/orderdbrootpassword
+      MYSQL_DATABASE: orderdb
+    networks:
+      - default
   messaging-service:
     image: rabbitmq:3-management
     ports:
@@ -134,6 +179,8 @@ secrets:
   adminpassword:
     external: true
   catalogdbrootpassword:
+    external: true
+  orderdbrootpassword:
     external: true
   sslkeystorepassword:
     external: true
