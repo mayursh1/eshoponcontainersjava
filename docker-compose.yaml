@@ -121,7 +121,7 @@ services:
       context: ./order-service/
       dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "8082:8080"
     environment:
       - discoveryhost=discovery-server
       - discoveryport=8761
@@ -168,7 +168,7 @@ services:
     volumes:
       - "./.data/messagebus/data:/var/lib/rabbitmq/"
       - "./.data/messagebus/log/:/var/log/rabbitmq"
-  
+
 networks:
   default:
     driver: overlay

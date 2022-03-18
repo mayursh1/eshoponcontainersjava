@@ -16,4 +16,4 @@ RUN apk add --update curl && \
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/
 
-ENTRYPOINT ["java","-jar","/app/catalogservice-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","/app/orderingservice-0.0.1-SNAPSHOT.jar"]
